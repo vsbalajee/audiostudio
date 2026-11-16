@@ -56,14 +56,28 @@ def main() -> int:
     parser = argparse.ArgumentParser(description='Build or check Audio Studio skill ZIP')
     parser.add_argument('--check', action='store_true', help='Fail if distribution ZIP is not up to date')
     args = parser.parse_args()
-    binary = build_archive()
-    digest = sha256(binary).hexdigest()
     if args.check:
-        if not OUTPUT.is_file() or OUTPUT.read_bytes() != binary:
-            print('ERROR: packaged ZIP missing or stale; run python scripts/build_skill_zip.py', file=sys.stderr)
+        if not OUTPUT.is_file():
+            print('ERROR: packaged ZIP missing; run python scripts/build_skill_zip.py', file=sys.stderr)
             return 1
-        print(f'PASS: {OUTPUT.name} matches source; SHA256 {digest}')
+        # Compression output can vary between zlib versions and platforms.
+        # Validate uncompressed file contents, paths and completeness instead of
+        # byte-comparing independently compressed ZIPs.
+        expected = {f'audio-studio/{rel}' for rel in INCLUDED}
+        with ZipFile(OUTPUT, 'r') as archive:
+            found = set(archive.namelist())
+            if found != expected:
+                print('ERROR: packaged ZIP entries differ from expected source list', file=sys.stderr)
+                return 1
+            for rel in INCLUDED:
+                if archive.read(f'audio-studio/{rel}') != (ROOT / rel).read_bytes():
+                    print(f'ERROR: stale packaged file: {rel}', file=sys.stderr)
+                    return 1
+        digest = sha256(OUTPUT.read_bytes()).hexdigest()
+        print(f'PASS: {OUTPUT.name} contains exactly the current source files; SHA256 {digest}')
     else:
+        binary = build_archive()
+        digest = sha256(binary).hexdigest()
         OUTPUT.parent.mkdir(exist_ok=True, parents=True)
         OUTPUT.write_bytes(binary)
         print(f'Built {OUTPUT} ({len(binary):,} bytes) SHA256 {digest}')
