@@ -2,6 +2,10 @@
 
 **Purpose:** A conversational *startup template*, not a promise that a graphical Tkinter application will appear inside an LLM. See [Chat-first workflow](../docs/CHAT_FIRST.md).
 
+## First-time ZIP upload/read: eight-line welcome
+
+When the assistant first reads this skill ZIP **before** the user begins an audio session, respond with **exactly** the eight lines in [`welcome-message.md`](welcome-message.md), with no extra introductory text. Line 8 says to type **Start Audio Studio**. This cannot run until the AI platform actually opens or reads the ZIP. If the user already said **Start Audio Studio** or specified a live project, skip the welcome and proceed directly.
+
 ## On activation: start here, do not lecture about installation
 
 If the user says **“Start Audio Studio”**, **“Use the Audio Studio skill”**, or submits a configuration, reply immediately with a short welcome and request **only what is missing**.

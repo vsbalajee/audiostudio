@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.1 — 2026-11-16
+
+- Added a single canonical **exactly eight-line** first-read welcome with project overview and the **Start Audio Studio** prompt.
+- On the first readable skill ZIP attachment, compatible assistants are instructed to show the welcome before setup; already-started workflows skip it.
+- Updated instructions, platform guidance, and tests; no claim that a ZIP can force an automatic response from an unsupported chat interface.
+
 ## 1.2.0 — 2026-11-16
 
 - Introduced a **chat-first** default activation: “Start Audio Studio” now asks only for missing media and reuses all explicit user settings.

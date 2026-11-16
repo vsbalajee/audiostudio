@@ -51,6 +51,27 @@ class ChatFirstTests(unittest.TestCase):
         self.assertEqual(project['between_seconds'], 3)
         self.assertEqual(project['after_intro_seconds'], 3)
 
+    def test_first_read_welcome_is_exactly_eight_lines_and_ends_with_action(self):
+        path = ROOT / 'forms/welcome-message.md'
+        text = path.read_text(encoding='utf-8')
+        lines = text.splitlines()
+        self.assertEqual(len(lines), 8)
+        self.assertTrue(all(line.strip() for line in lines))
+        self.assertIn('Welcome to Audio Studio', lines[0])
+        self.assertIn('Start Audio Studio', lines[-1])
+        self.assertTrue(all(line.endswith('  ') for line in lines), 'Preserve Markdown hard line breaks')
+        self.assertNotIn('install Python', text)
+
+    def test_first_read_prompt_is_documented_in_the_skill_and_guides(self):
+        for path in ('SKILL.md', 'README.md', 'docs/CHAT_FIRST.md', 'forms/chat-form.md'):
+            content = (ROOT / path).read_text(encoding='utf-8')
+            with self.subTest(path=path):
+                self.assertIn('welcome-message.md', content)
+        skill = (ROOT / 'SKILL.md').read_text(encoding='utf-8')
+        self.assertIn('eight-line', skill)
+        self.assertIn('skip the eight-line', skill)
+        self.assertIn('does not force', skill)
+
     def test_skill_includes_startup_requirements(self):
         skill = (ROOT / 'SKILL.md').read_text(encoding='utf-8')
         self.assertIn('Start Audio Studio', skill)

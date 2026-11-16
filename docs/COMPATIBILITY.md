@@ -2,6 +2,10 @@
 
 **As of November 2026.** The skill now starts with a short conversational setup when invoked in a compatible host. Agent Skills use a portable `SKILL.md` format, but LLM product interfaces are not interchangeable. **Installing skill instructions does not magically install FFmpeg, provide your voice files, or open the Tkinter form inside a chat.**
 
+## First-read welcome (eight lines)
+
+When the AI assistant can read the skill ZIP and the user has not begun a project, it is instructed to present an exact **eight-line welcome** from [`forms/welcome-message.md`](../forms/welcome-message.md), ending with **Type “Start Audio Studio” to begin.** If a platform does nothing when a ZIP is simply attached, prompt it with: **“Read the attached Audio Studio ZIP and follow SKILL.md.”** Uploading a ZIP does **not** guarantee a response without a user message, because attachment behavior differs across products.
+
 ## Chat-first activation
 
 After installing/attaching a skill where supported, tell the AI **“Start Audio Studio.”** It should request missing voice/music attachments, remember explicit preferences, show an actual validated timeline and request approval before generating an MP3. It cannot force a native file-upload form into a platform that does not support one. [Step-by-step examples](CHAT_FIRST.md).

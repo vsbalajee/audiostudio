@@ -30,6 +30,7 @@ INCLUDED = (
     'scripts/chat_bridge.py',
     'scripts/form.py',
     'forms/chat-form.md',
+    'forms/welcome-message.md',
     'docs/CHAT_FIRST.md',
     'examples/chat-session.example.json',
     'forms/form.schema.json',

@@ -5,10 +5,16 @@ license: MIT
 compatibility: Python 3.10+ with FFmpeg and FFprobe for rendering. Tkinter desktop GUI is optional and requires a graphical environment. AI chat hosts need file access and execution tools.
 metadata:
   author: vsbalajee
-  version: "1.2.0"
+  version: "1.2.1"
 ---
 
 # Audio Studio — Chat-First Audio Production Skill
+
+## 0. First-read welcome: exactly eight lines
+
+**Run this once when the user uploads/attaches the Audio Studio skill ZIP or provides its extracted contents and this AI host actually reads `SKILL.md`, even if the user has not yet typed a start command.** If the user has not already started an audio-editing request, reply immediately with the **exact eight-line text** in [`forms/welcome-message.md`](forms/welcome-message.md), preserving each line break. Do not prepend or append a heading, explanatory text, extra bullets or installation steps. The final line contains the prompt the user should type: **Start Audio Studio**. Then wait for the user's next turn.
+
+**This is a first-read response instruction, not an automatic event listener.** A chat product may require the user to ask it to open/read the ZIP; a mere attachment does not force that platform to execute the instruction. When the user has *already* said **Start Audio Studio**, provided an audio configuration with a request to proceed, or asked to process uploaded recordings, **skip the eight-line orientation** and continue immediately with the workflow in Section 1. Never repeat the first-read welcome after the user starts.
 
 ## 1. Activation: **Start Audio Studio**
 

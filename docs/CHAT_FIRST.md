@@ -2,6 +2,10 @@
 
 This is the **default** experience when an assistant with access to `SKILL.md` is asked to **Start Audio Studio**. It is designed for short interactions on ChatGPT, Claude, Gemini CLI and other capable AI environments.
 
+## First interaction when the ZIP is read
+
+When the AI host *actually reads* the uploaded Audio Studio skill and the user has not started editing, it should display **only the eight-line welcome** stored in [`forms/welcome-message.md`](../forms/welcome-message.md). This short introduction tells users what the project does and ends with **Type “Start Audio Studio” to begin.** Do not repeat it after activation, and do not claim the skill can force a message from a chat application that did not read the attachment.
+
 ## Three stages, not an intimidating questionnaire
 
 **1. Gather audio.** Request voice attachments (individual files or one ZIP) and optional instrumental music. Honor all settings already in the conversation. Ask no questions whose answers are already present. If a native form is available, display a compact control group; otherwise use ordinary chat. The assistant must not draw a deceptive upload button when it cannot accept files.

@@ -6,7 +6,7 @@
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776ab)](https://www.python.org/downloads/)
 [![Agent Skills](https://img.shields.io/badge/Agent%20Skills-open%20format-008c72)](https://agentskills.io/specification)
 
-**Version 1.2.0 · November 2026 · Open source · No paid audio service required**
+**Version 1.2.1 · November 2026 · Open source · No paid audio service required**
 
 Audio Studio assembles numbered voice files, gently balances their levels, places music underneath them, creates exactly timed gaps, applies fades, and exports a **320 kbps stereo MP3**. The optional voice/music WAV stems remain separately editable in Movavi, Audacity, and similar editors.
 
@@ -18,7 +18,7 @@ Audio Studio assembles numbered voice files, gently balances their levels, place
 ## Start in a new AI chat — the easy way
 
 1. Download the **[dedicated Audio Studio skill ZIP](dist/audio-studio-skill.zip)**; it is different from the repository source ZIP.
-2. In an AI environment that supports skill installation or reading ZIP attachments, install/attach it and say **“Start Audio Studio.”**
+2. Upload/install the skill ZIP into an AI chat and let the assistant **read `SKILL.md`**. It is instructed to show an [eight-line welcome](forms/welcome-message.md) explaining Audio Studio and the next action. If no response appears, ask: **“Read the attached Audio Studio ZIP and follow SKILL.md.”** Then type **“Start Audio Studio.”**
 3. **Attach your voice recordings** (separate audio files or a ZIP) and optional background instrumental when prompted.
 4. The assistant should reuse any settings you already gave, **show the proposed timeline**, and request approval before rendering. Audio rendering works only when the chat has access to actual media files and Python/FFmpeg tools. Otherwise use the local desktop form.
 
