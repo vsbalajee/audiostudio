@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.coverage
+.venv/
+venv/
+dist-build/
+build/
+*.egg-info/
+
+# IDE, OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Audio user data (never publish personal recordings or rendered mixes)
+*.mp3
+*.mp4
+*.m4a
+*.wav
+*.flac
+*.aac
+*.ogg
+*.opus
+*.mov
+*.mkv
+*.webm
+*.wma
+*.mepx
+*.aup3
+*.zip
+!dist/audio-studio-skill.zip
+
+# Outputs and local configurations
+output/
+outputs/
+*.local.json
+.env
+.env.*
+!.env.example

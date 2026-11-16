@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Audio Studio - Easy Audio Production Form",
+  "description": "UI-neutral schema: a standalone Tkinter GUI implements the equivalent controls; chat platforms can adapt these fields as supported.",
+  "type": "object",
+  "properties": {
+    "project_name": {"type": "string", "minLength": 1, "title": "Project name", "default": "My Audio Project"},
+    "voice_files": {"type": "array", "title": "Voice recordings in order", "items": {"type": "string"}, "minItems": 1, "description": "Actual local file paths supplied through available upload/folder UI. File attachments need to be resolved by the host."},
+    "music_file": {"type": "string", "title": "Optional background instrumental", "default": ""},
+    "after_intro_seconds": {"type": "number", "title": "Music-only gap after first recording (seconds)", "minimum": 0, "maximum": 300, "default": 5},
+    "between_seconds": {"type": "number", "title": "Gap between later recordings (seconds)", "minimum": 0, "maximum": 300, "default": 3},
+    "outro_seconds": {"type": "number", "title": "Music-only ending (seconds)", "minimum": 0, "maximum": 300, "default": 5},
+    "music_under_intro": {"type": "boolean", "title": "Music under introduction", "default": false},
+    "mute_music_during_final_voice": {"type": "boolean", "title": "No music during final voice", "default": true},
+    "normalize_voice": {"type": "boolean", "title": "Gently balance voice volumes", "default": true},
+    "gentle_cleanup": {"type": "boolean", "title": "Remove low rumble", "default": true},
+    "denoise_voice": {"type": "boolean", "title": "Optional stronger noise reduction", "default": false},
+    "trim_edge_silence": {"type": "boolean", "title": "Optional trim long edge silences", "default": false},
+    "export_stems": {"type": "boolean", "title": "Export separate WAV voice/music tracks", "default": false},
+    "music_voice_db": {"type": "number", "title": "Music under voice (dB)", "minimum": -60, "maximum": 0, "default": -25},
+    "music_gap_db": {"type": "number", "title": "Music during gaps and outro (dB)", "minimum": -60, "maximum": 0, "default": -17},
+    "additional_instructions": {"type": "string", "title": "Additional instructions (saved for review; not automatically executed)", "default": ""},
+    "output_dir": {"type": "string", "title": "Where to save results"}
+  },
+  "required": ["project_name", "voice_files"],
+  "additionalProperties": false
+}

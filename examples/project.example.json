@@ -1,0 +1,23 @@
+{
+  "project_name": "My Tamil Musical Tribute",
+  "voice_files": [
+    "C:/MyAudio/0.mp4",
+    "C:/MyAudio/1.mp4",
+    "C:/MyAudio/2.mp4"
+  ],
+  "music_file": "C:/MyAudio/background-music.mp3",
+  "output_dir": "C:/MyAudio/Output",
+  "after_intro_seconds": 5,
+  "between_seconds": 3,
+  "outro_seconds": 5,
+  "music_under_intro": false,
+  "mute_music_during_final_voice": true,
+  "music_voice_db": -25,
+  "music_gap_db": -17,
+  "normalize_voice": true,
+  "gentle_cleanup": true,
+  "denoise_voice": false,
+  "trim_edge_silence": false,
+  "export_stems": true,
+  "additional_instructions": "Example: I want a gentle, emotional atmosphere. This note is saved, not automatically acted on."
+}

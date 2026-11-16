@@ -1,0 +1,26 @@
+name: Bug report
+description: Report a reproducible issue with the Audio Studio engine or form
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: "Please do not upload private voice recordings or personal audio publicly. Use a synthetic test file if possible."
+  - type: textarea
+    id: issue
+    attributes:
+      label: What went wrong?
+      description: Describe actual versus expected behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Include settings and a minimal non-sensitive example.
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: Environment
+      placeholder: "Windows 11, Python 3.13, FFmpeg 7.1"
