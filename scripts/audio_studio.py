@@ -17,7 +17,7 @@ import sys
 import tempfile
 import wave
 
-VERSION="1.1.0"
+VERSION="1.2.0"
 RATE=48000
 SUPPORTED={'.mp3','.wav','.m4a','.aac','.flac','.ogg','.oga','.opus','.mp4','.mov','.mkv','.webm','.wma'}
 DEFAULTS={

@@ -8,6 +8,10 @@ Audio Studio is aligned with the [Agent Skills](https://agentskills.io/specifica
 2. **Full source archive:** GitHub **Code → Download ZIP** — includes tests, CI, documentation and the skill package under `dist/`.
 3. **Standalone desktop app:** extract either package and launch `scripts/form.py` from the extracted folder with Python and FFmpeg installed.
 
+## Chat-first startup
+
+The default assistant interaction is “Start Audio Studio” → request missing recordings/music → show measured timeline → confirm → render if tools allow. See [`docs/CHAT_FIRST.md`](docs/CHAT_FIRST.md). The standalone graphical desktop form is optional; no AI platform is required to render it inside chat.
+
 ## LLM execution requirements
 
 An AI model can interpret `SKILL.md` if it can access the file. **To process audio**, it also needs a working execution environment, the source audio bytes, Python, FFmpeg and permission to write outputs. A generic chat interface may have none of these. Installing instructions and executing code are distinct capabilities.

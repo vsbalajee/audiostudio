@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.2.0 — 2026-11-16
+
+- Introduced a **chat-first** default activation: “Start Audio Studio” now asks only for missing media and reuses all explicit user settings.
+- Added compact chat form and quick-start examples with honest platform capability boundaries.
+- Added a tested standard-library `chat_bridge.py` that maps short user choices into full engine settings, including correct handling of `mute_music_during_final_voice: false` and a single gap value applied to every clip boundary.
+- Added chat-session example, regression tests, and updated portable skill ZIP.
+- Kept the desktop editor and underlying FFmpeg mixing workflow unchanged.
+
+
 ## 1.1.0 — 2026-11-14
 
 - Prepared public open-source repository with installation guides, security information, contributions, GitHub Actions and Dependabot.

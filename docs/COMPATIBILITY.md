@@ -1,6 +1,10 @@
 # Use Audio Studio with ChatGPT, Claude, Gemini and other AI assistants
 
-**As of November 2026.** Agent Skills use a portable `SKILL.md` format, but LLM product interfaces are not interchangeable. **Installing skill instructions does not magically install FFmpeg, provide your voice files, or open the Tkinter form inside a chat.**
+**As of November 2026.** The skill now starts with a short conversational setup when invoked in a compatible host. Agent Skills use a portable `SKILL.md` format, but LLM product interfaces are not interchangeable. **Installing skill instructions does not magically install FFmpeg, provide your voice files, or open the Tkinter form inside a chat.**
+
+## Chat-first activation
+
+After installing/attaching a skill where supported, tell the AI **“Start Audio Studio.”** It should request missing voice/music attachments, remember explicit preferences, show an actual validated timeline and request approval before generating an MP3. It cannot force a native file-upload form into a platform that does not support one. [Step-by-step examples](CHAT_FIRST.md).
 
 ## Download the right file
 
@@ -11,7 +15,7 @@
 
 In a ChatGPT environment with skill upload/import, attach the installable ZIP in the supported skill workflow. Alternatively, upload it as a file to a chat and ask the assistant to inspect `SKILL.md`. Whether the assistant can **execute** Python/FFmpeg and access folders or connected storage depends on your product, plan, enabled tools and current session.
 
-**Example prompt:** “Use the attached Audio Studio skill to arrange my recordings and music. First validate file access and the proposed timeline. Run the engine only if Python/FFmpeg are available; otherwise tell me how to run the desktop form.”
+**Example prompt:** “Start Audio Studio. Ask me for the missing audio attachments, preserve my settings and show the proposed timeline before rendering. Use Python/FFmpeg only when available; otherwise explain the local desktop option.”
 
 ## Claude / Claude Code
 

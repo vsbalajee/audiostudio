@@ -27,8 +27,11 @@ INCLUDED = (
     'Start_Audio_Studio_Windows.bat',
     'Start_Audio_Studio_Mac_Linux.sh',
     'scripts/audio_studio.py',
+    'scripts/chat_bridge.py',
     'scripts/form.py',
     'forms/chat-form.md',
+    'docs/CHAT_FIRST.md',
+    'examples/chat-session.example.json',
     'forms/form.schema.json',
     'examples/project.example.json',
     'docs/COMPATIBILITY.md',
@@ -44,7 +47,7 @@ def build_archive() -> bytes:
             src = ROOT / rel
             if not src.is_file():
                 raise FileNotFoundError(f'Missing required skill file: {src}')
-            entry = ZipInfo(f'audio-studio/{rel}', date_time=(2026, 11, 14, 0, 0, 0))
+            entry = ZipInfo(f'audio-studio/{rel}', date_time=(2026, 11, 16, 0, 0, 0))
             entry.create_system = 3
             entry.external_attr = (0o755 if rel.endswith('.sh') else 0o644) << 16
             entry.compress_type = ZIP_DEFLATED

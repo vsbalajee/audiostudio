@@ -1,46 +1,56 @@
-# Audio Studio — Compact Form for Any AI Assistant
+# Audio Studio — Simple Chat Setup
 
-When the chat app supports a native form, these are its recommended fields. If native forms are not available, ask the user conversationally for only missing information. A standalone GUI is provided in `scripts/form.py`.
+**Purpose:** A conversational *startup template*, not a promise that a graphical Tkinter application will appear inside an LLM. See [Chat-first workflow](../docs/CHAT_FIRST.md).
 
-## Required
+## On activation: start here, do not lecture about installation
 
-**Project name:** [My Audio Project]
+If the user says **“Start Audio Studio”**, **“Use the Audio Studio skill”**, or submits a configuration, reply immediately with a short welcome and request **only what is missing**.
 
-**Voice recordings:** [Attach files / ZIP, or provide accessible folder link]
+**If no recordings are attached:**
 
-**Background music:** [Attach instrumental file / choose none]
+> **Audio Studio is ready.** Please attach your voice recordings (individual MP3/WAV/MP4 files or one ZIP). You can also attach a background instrumental, or say “no music.” I'll check the files and show you the proposed sequence and pauses before processing.
 
-## Timing
+If the user **already supplied settings**, acknowledge them in one concise line; **do not ask again** for project name, gap, music level, cleanup, normalization or mute choice.
 
-**After first recording:** [5] seconds music-only gap (if music selected)
+If the user has attached the voice files, **skip the upload request**. Validate file access with the host's actual tools; request music only if the user wants it and it is missing. Do not ask for media that is already available through an authorized connection.
 
-**Between remaining recordings:** [3] seconds
+## Optional compact form (only if the host supports native controls)
 
-**Music-only ending:** [5] seconds
+Show these fields in a small panel, preferably with defaults already filled:
 
-## Select options
+| Field | Default | Control |
+| --- | --- | --- |
+| Project name | My Audio Project | Short text |
+| Voice recordings | Required; supplied through the chat attachment control or authorized storage | Attachment instruction, **not a fake upload button** |
+| Background music | None / attach an instrumental | Attachment instruction |
+| Gap between all recordings | 3 seconds | Number or dropdown |
+| Music level | Quiet | Very quiet / Quiet / Balanced / More prominent |
+| Gently reduce low rumble | On | Checkbox |
+| Balance voice volume | On | Checkbox |
+| No music during final voice | On, unless user explicitly says off | Checkbox |
+| Extra instructions | Empty | Optional text area |
 
-- [x] Keep recordings in numerical order (0, 1, 2...)
-- [x] Balance voice volumes gently
-- [x] Reduce low-frequency rumble
-- [ ] Optional stronger noise reduction (may cause artifacts)
-- [ ] Trim silence at the beginnings/ends of recordings
-- [x] Keep music beneath the narration at a low volume
-- [x] No background music during the final voice recording
-- [ ] Add music beneath the introduction
-- [ ] Export separate synchronized WAV tracks for editing
+**More options** (do not display until asked): different gap after clip 1, musical outro, music under intro, separate WAV tracks, edge trimming, stronger denoise, per-clip rules. A musical outro is **5 seconds by default when background music is supplied**.
 
-**Music strength:** [Quiet — voice first / Very quiet / Balanced / More prominent]
+When native controls are unavailable, provide the short welcome and ask for attachments rather than rendering a long text form. The chat's file attachment mechanism is the actual upload interface; no skill can conjure a universal file-picker widget.
 
-**Additional requirements:** [Optional free text — must be reviewed explicitly by the LLM or user, never silently marked complete]
+## When audio is available: preview first
 
-**Output:** [320 kbps stereo MP3 / MP3 + WAV stems]
+Show the detected filenames, numerical order when appropriate, estimated clip durations, and a readable timeline:
 
-## Assistant instructions
+`Voice 0 → 3s gap → Voice 1 → 3s gap → Voice 2 ... → final voice → optional outro`
 
-1. Resolve attachments/folder contents through tools only if actually accessible; don't assume URLs have been downloaded.
-2. Confirm order and any conflicting requests.
-3. Convert the choices into `examples/project.example.json` keys.
-4. Ask approval if the free-text requirements cannot be represented by supported settings.
-5. Run validate, then render. Share only generated files that were verified to exist.
-6. Report technical changes, duration, and known limitations. Never claim to have artistically listened unless an actual listening capability was available.
+Do not claim durations have been measured until they actually have. State whether music is **present or muted** beneath the last voice, honoring user-provided `true` **and** `false`. If the user specifies **“3 seconds between clips”**, apply 3 seconds to **every gap**, including the first, unless a distinct intro gap was also requested.
+
+Confirm the timeline with the user before the first render. After approval, translate selected values with `scripts/chat_bridge.py` (or directly populate the supported engine JSON), then run `validate` and `render` if the host actually permits them.
+
+## Quick user prompt
+
+> Start Audio Studio. I will attach voice recordings and optional background music. Guide me through a short setup, reuse settings I already provided, show the timeline, and only process the files if your tools support it.
+
+## Honest capability rules
+
+- The assistant may **display an inline native form** only when supported by that chat product. This document itself is not a native form executable across all LLMs.
+- Python, FFmpeg, actual audio bytes and write access are required for processing. Otherwise direct the user to the standalone local GUI with brief setup instructions.
+- `additional_instructions` are **not automatically executed** by the engine. Explicitly review them and map only supported instructions into settings, or warn the user.
+- Never claim to have listened to audio, removed noise, or exported files unless the corresponding operations were truly performed and verified.

@@ -1,0 +1,13 @@
+{
+  "project_name": "My Audio Project",
+  "voice_files": ["/your/path/0.mp4", "/your/path/1.mp4"],
+  "music_file": "/your/path/background-music.mp3",
+  "output_dir": "/your/path/output",
+  "gap_seconds": 3,
+  "music_level": "quiet",
+  "gentle_noise_reduction": true,
+  "normalize_voice": true,
+  "mute_music_during_final_voice": false,
+  "outro_seconds": 5,
+  "additional_instructions": ""
+}
