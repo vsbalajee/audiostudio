@@ -30,7 +30,7 @@ input[type=checkbox]{accent-color:var(--accent);width:18px;height:18px}.check{di
 </head>
 <body>
 <main>
-<header class="hero"><div><h1>Audio Studio</h1><p class="muted">Voice + Music Mixer · Designed for creative control</p></div><span class="tag">Browser version · Preview</span></header>
+<header class="hero"><div><h1>Audio Studio</h1><p class="muted">Voice + Music Mixer · Designed for creative control</p></div><span class="tag">Browser version</span></header>
 <section class="card"><h2>1. Your project</h2><p class="muted">Name the final recording.</p><input id="project" type="text" value="My Audio Project" maxlength="120" aria-label="Project name"></section>
 <section class="card"><h2>2. Voice recordings</h2><p class="muted">Choose your local recordings. Move them up or down to adjust the order.</p>
 <div class="row"><label class="btn upload" style="color:var(--fg);margin:0">+ Add recordings<input id="voices" type="file" accept="audio/*,.mp4,.mov,.mkv,.webm" multiple></label><button id="sort" class="btn" type="button">Sort by filename</button><button id="clear" class="btn" type="button">Clear all</button></div>
@@ -41,12 +41,14 @@ input[type=checkbox]{accent-color:var(--accent);width:18px;height:18px}.check{di
 <div class="grid two" style="margin-top:18px"><div><label for="musicLevel">Music level</label><select id="musicLevel"><option value="very quiet">Very quiet</option><option value="quiet" selected>Quiet — voice first</option><option value="balanced">Balanced</option><option value="prominent">Prominent</option></select></div><div><div class="check"><input id="musicIntro" type="checkbox"><label for="musicIntro">Music under introduction</label></div><div class="check"><input id="muteFinal" type="checkbox" checked><label for="muteFinal">Mute music during final voice</label></div></div></div></section>
 <section class="card"><h2>4. Timing and cleanup</h2><p class="muted">Adjust pauses and voice enhancements.</p>
 <div class="grid"><div><label for="firstGap">After first voice (seconds)</label><input id="firstGap" type="number" min="0" max="120" step=".5" value="3"></div><div><label for="gap">Between other voices (seconds)</label><input id="gap" type="number" min="0" max="120" step=".5" value="3"></div><div><label for="outro">Music-only outro (seconds)</label><input id="outro" type="number" min="0" max="120" step=".5" value="5"></div></div>
-<div class="grid two" style="margin-top:16px"><div><div class="check"><input id="cleanup" type="checkbox" checked><label for="cleanup">Gentle low-rumble cleanup</label></div><div class="check"><input id="normalize" type="checkbox" checked><label for="normalize">Balance voice volume</label></div></div><div><div class="check"><input id="denoise" type="checkbox"><label for="denoise">Optional denoising</label></div><div class="check"><input id="stems" type="checkbox"><label for="stems">Export separate WAV tracks when available</label></div></div></div></section>
+<div class="grid two" style="margin-top:16px"><div><div class="check"><input id="cleanup" type="checkbox" checked><label for="cleanup">Gentle low-rumble cleanup</label></div><div class="check"><input id="normalize" type="checkbox" checked><label for="normalize">Balance voice volume</label></div></div><div><div class="check"><input id="denoise" type="checkbox"><label for="denoise">Optional denoising</label></div></div></div></section>
 <section class="card"><h2>5. Timeline &amp; export</h2><p class="muted">Review the calculated timeline before editing.</p>
 <div id="timeline">Add recordings and select “Preview timeline”.</div><div style="margin-top:14px"><label for="notes">Additional editing instructions</label><textarea id="notes" rows="3" placeholder="Optional notes for your editing session"></textarea></div>
-<p class="note"><b>Preview limitation:</b> this version opens the real designed form, reads local recording metadata, and exports project settings. MP3 generation is not connected yet; the existing Python/FFmpeg editor still handles finished audio.</p></section>
-<footer class="footer"><div class="row"><span id="status" role="status" class="status">Ready to add recordings.</span><div class="row"><button id="preview" class="btn">Preview timeline</button><button id="download" class="btn">Download settings</button><button class="btn accent" disabled title="MP3 rendering is not yet connected">Generate MP3 · Coming next</button></div></div></footer>
+<p class="muted">The MP3 is generated on your device. Additional editing instructions are saved with the settings.</p></section>
+<footer class="footer"><div class="row"><span id="status" role="status" class="status">Ready to add recordings.</span><div class="row"><button id="preview" class="btn">Preview timeline</button><button id="download" class="btn">Download settings</button><button id="render" class="btn accent">Generate MP3</button></div></div></footer>
 </main>
+<script defer src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js" integrity="sha384-xuasJXVcyv3hZq0eYpelEkBC8l4yufatZXDsKuyCU2rqfhDCb+ftuE/mSfZAteiK" crossorigin="anonymous"></script>
+<script defer src="/render-audio.js"></script>
 <script>
 "use strict";
 const byId=id=>document.getElementById(id);const tracks=[];let music=null;
@@ -61,10 +63,33 @@ byId("clear").onclick=()=>{tracks.length=0;refresh()};
 byId("music").onchange=e=>{music=e.target.files[0]||null;byId("musicName").textContent=music?music.name:"No music selected";e.target.value=""};
 byId("removeMusic").onclick=()=>{music=null;byId("musicName").textContent="No music selected"};
 const num=id=>{const v=Number(byId(id).value);if(!Number.isFinite(v)||v<0||v>120)throw Error("Gaps must be between 0 and 120 seconds.");return v};
-function settings(){return {project_name:byId("project").value.trim()||"My Audio Project",voice_files:tracks.map(t=>t.file.name),measured_durations_seconds:tracks.map(t=>t.duration),music_file:music?.name||"",music_level:byId("musicLevel").value,after_intro_seconds:num("firstGap"),between_seconds:num("gap"),outro_seconds:music?num("outro"):0,music_under_intro:byId("musicIntro").checked,mute_music_during_final_voice:byId("muteFinal").checked,gentle_cleanup:byId("cleanup").checked,normalize_voice:byId("normalize").checked,denoise_voice:byId("denoise").checked,export_stems:byId("stems").checked,additional_instructions:byId("notes").value,rendered:false}}
+function settings(){return {project_name:byId("project").value.trim()||"My Audio Project",voice_files:tracks.map(t=>t.file.name),measured_durations_seconds:tracks.map(t=>t.duration),music_file:music?.name||"",music_level:byId("musicLevel").value,after_intro_seconds:num("firstGap"),between_seconds:num("gap"),outro_seconds:music?num("outro"):0,music_under_intro:byId("musicIntro").checked,mute_music_during_final_voice:byId("muteFinal").checked,gentle_cleanup:byId("cleanup").checked,normalize_voice:byId("normalize").checked,denoise_voice:byId("denoise").checked,export_stems:false,additional_instructions:byId("notes").value,rendered:false}}
 function preview(){try{const s=settings();if(!tracks.length)throw Error("Add recordings before previewing.");let total=0,all=true;const rows=[];tracks.forEach((t,i)=>{if(i){const gap=i===1?s.after_intro_seconds:s.between_seconds;rows.push("   ⇣ "+gap+" second gap");total+=gap}rows.push((i+1)+". "+t.file.name+" ("+pretty(t.duration)+")");if(t.duration===null)all=false;else total+=t.duration});if(music){rows.push("   ⇣ "+s.outro_seconds+" second music outro");total+=s.outro_seconds}rows.push("");rows.push(all?"Estimated total: "+pretty(total):"Total unavailable: one or more recording durations could not be read.");rows.push("Background music: "+(music?music.name+" ("+s.music_level+")":"none"));rows.push("Music during final voice: "+(music?(s.mute_music_during_final_voice?"muted":"allowed"):"not applicable"));byId("timeline").textContent=rows.join("\n");byId("status").textContent="Timeline ready for review. No audio has been rendered."}catch(err){byId("status").textContent=err.message}}
 byId("preview").onclick=preview;
 byId("download").onclick=()=>{try{const s=settings();if(!tracks.length)throw Error("Select recordings first.");const url=URL.createObjectURL(new Blob([JSON.stringify(s,null,2)],{type:"application/json"}));const a=document.createElement("a");a.href=url;a.download=s.project_name.replace(/[^a-z0-9_-]/gi,"_")+".json";a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);byId("status").textContent="Settings downloaded locally; no audio transmitted."}catch(err){byId("status").textContent=err.message}};
+byId("render").onclick=async ()=>{
+  const button=byId("render");
+  const status=message=>{byId("status").textContent=message};
+  button.disabled=true;
+  try {
+    if (!tracks.length) throw Error("Select recordings first.");
+    if (typeof lamejs === "undefined") throw Error("The MP3 encoder could not load. Refresh and try again.");
+    const selected=tracks.map(track=>track.file);
+    const s=settings();
+    const blob=await renderAudio(selected,music,s,status);
+    const url=URL.createObjectURL(blob);
+    const link=document.createElement("a");
+    link.href=url;
+    link.download=(s.project_name.replace(/[<>:"/\\|?*]/g,"_").trim()||"Audio Studio")+".mp3";
+    link.click();
+    setTimeout(()=>URL.revokeObjectURL(url),30000);
+    status("MP3 generated. Check your downloads.");
+  } catch (error) {
+    status(error.message || "Could not generate the MP3.");
+  } finally {
+    button.disabled=false;
+  }
+};
 const preset=new URLSearchParams(location.search).get("project");if(preset)byId("project").value=preset.slice(0,120);
 </script>
 </body>
