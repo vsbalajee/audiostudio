@@ -79,8 +79,8 @@ def main() -> int:
                 # Git attributes check out Windows .bat files with CRLF, while
                 # the portable skill ZIP may contain LF. Both are equivalent.
                 if rel.endswith('.bat'):
-                    archived = archived.replace(b'\\r\\n', b'\\n')
-                    current = current.replace(b'\\r\\n', b'\\n')
+                    archived = archived.replace(b'\r\n', b'\n')
+                    current = current.replace(b'\r\n', b'\n')
                 if archived != current:
                     print(f'ERROR: stale packaged file: {rel}', file=sys.stderr)
                     return 1
