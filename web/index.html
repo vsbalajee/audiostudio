@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Audio Studio—prepare voice and music projects in a simple private browser form.">
+<title>Audio Studio | Voice + Music Mixer</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1423;--panel:#17253a;--panel2:#213249;--entry:#223449;--fg:#f6fafc;--muted:#a6b7c9;--accent:#49dec1;--line:#2b4058}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.48 system-ui,"Segoe UI",Arial,sans-serif}
+main{width:min(980px,calc(100% - 30px));margin:24px auto 120px}h1{font-size:34px;letter-spacing:-.7px;margin:0}
+h2{font-size:18px;margin:0 0 5px}p{margin:5px 0 14px}.muted{color:var(--muted)}.tag{border:1px solid #367767;color:var(--accent);border-radius:25px;padding:5px 12px;font-size:12px}
+.hero{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:22px}
+.card{background:var(--panel);border:1px solid var(--line);padding:23px;margin:16px 0;border-radius:5px}
+input[type=text],input[type=number],select,textarea{padding:11px;width:100%;border:1px solid #38546e;border-radius:3px;background:var(--entry);color:var(--fg);font:inherit}
+textarea{resize:vertical}label{display:block;margin-bottom:6px;font-size:13px;color:var(--muted)}
+input[type=checkbox]{accent-color:var(--accent);width:18px;height:18px}.check{display:flex;gap:10px;align-items:center;color:var(--fg);margin:12px 0}
+.check label{margin:0;color:var(--fg);font-size:14px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.btn{border:0;border-radius:3px;background:var(--panel2);color:var(--fg);font-weight:650;padding:10px 14px;min-height:42px;cursor:pointer}
+.btn:hover{filter:brightness(1.18)}.accent{background:var(--accent);color:#10202b}.btn:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent)}
+.upload{position:relative;display:inline-block}.upload input{position:absolute;inset:0;opacity:0;width:100%;cursor:pointer}
+.files{margin:12px 0;min-height:82px;border:1px solid #3b526a;background:var(--entry);padding:10px}
+.file{display:flex;align-items:center;gap:12px;justify-content:space-between;padding:9px;margin:4px 0;border-bottom:1px solid var(--line)}
+.file .name{overflow-wrap:anywhere;flex:1;min-width:0}.mini{padding:5px 9px;min-height:auto}
+.note{padding:12px;border-left:3px solid #dbad62;background:#2b2e31;color:#f3d5a4;font-size:13px}
+#timeline{padding:15px;background:#0b1d2b;border:1px solid #35625f;white-space:pre-wrap;overflow-wrap:anywhere}
+.footer{position:sticky;bottom:0;background:#0b1423ef;border-top:1px solid #344c5e;margin-top:24px;padding:12px 0}.footer .row{justify-content:space-between}
+.status{color:var(--muted);font-size:13px}.footer button:disabled{opacity:.5;cursor:not-allowed}
+@media(max-width:670px){.grid,.two{grid-template-columns:1fr}.hero{align-items:flex-start;flex-direction:column}main{margin-top:16px}.card{padding:17px}.file{flex-wrap:wrap}.footer .row{align-items:flex-start}}
+</style>
+</head>
+<body>
+<main>
+<header class="hero"><div><h1>Audio Studio</h1><p class="muted">Voice + Music Mixer · Designed for creative control</p></div><span class="tag">Browser version · Preview</span></header>
+<section class="card"><h2>1. Your project</h2><p class="muted">Name the final recording.</p><input id="project" type="text" value="My Audio Project" maxlength="120" aria-label="Project name"></section>
+<section class="card"><h2>2. Voice recordings</h2><p class="muted">Choose your local recordings. Move them up or down to adjust the order.</p>
+<div class="row"><label class="btn upload" style="color:var(--fg);margin:0">+ Add recordings<input id="voices" type="file" accept="audio/*,.mp4,.mov,.mkv,.webm" multiple></label><button id="sort" class="btn" type="button">Sort by filename</button><button id="clear" class="btn" type="button">Clear all</button></div>
+<div id="files" class="files"><p class="muted">No recordings selected.</p></div>
+<p class="muted" style="font-size:12px">The files stay in your browser. Selecting them does not upload them to Cloudflare.</p></section>
+<section class="card"><h2>3. Background music</h2><p class="muted">Optional instrumental background audio.</p>
+<div class="row"><label class="btn upload" style="color:var(--fg);margin:0">Choose music<input id="music" type="file" accept="audio/*"></label><span id="musicName" class="muted">No music selected</span><button id="removeMusic" class="btn">Remove</button></div>
+<div class="grid two" style="margin-top:18px"><div><label for="musicLevel">Music level</label><select id="musicLevel"><option value="very quiet">Very quiet</option><option value="quiet" selected>Quiet — voice first</option><option value="balanced">Balanced</option><option value="prominent">Prominent</option></select></div><div><div class="check"><input id="musicIntro" type="checkbox"><label for="musicIntro">Music under introduction</label></div><div class="check"><input id="muteFinal" type="checkbox" checked><label for="muteFinal">Mute music during final voice</label></div></div></div></section>
+<section class="card"><h2>4. Timing and cleanup</h2><p class="muted">Adjust pauses and voice enhancements.</p>
+<div class="grid"><div><label for="firstGap">After first voice (seconds)</label><input id="firstGap" type="number" min="0" max="120" step=".5" value="3"></div><div><label for="gap">Between other voices (seconds)</label><input id="gap" type="number" min="0" max="120" step=".5" value="3"></div><div><label for="outro">Music-only outro (seconds)</label><input id="outro" type="number" min="0" max="120" step=".5" value="5"></div></div>
+<div class="grid two" style="margin-top:16px"><div><div class="check"><input id="cleanup" type="checkbox" checked><label for="cleanup">Gentle low-rumble cleanup</label></div><div class="check"><input id="normalize" type="checkbox" checked><label for="normalize">Balance voice volume</label></div></div><div><div class="check"><input id="denoise" type="checkbox"><label for="denoise">Optional denoising</label></div><div class="check"><input id="stems" type="checkbox"><label for="stems">Export separate WAV tracks when available</label></div></div></div></section>
+<section class="card"><h2>5. Timeline &amp; export</h2><p class="muted">Review the calculated timeline before editing.</p>
+<div id="timeline">Add recordings and select “Preview timeline”.</div><div style="margin-top:14px"><label for="notes">Additional editing instructions</label><textarea id="notes" rows="3" placeholder="Optional notes for your editing session"></textarea></div>
+<p class="note"><b>Preview limitation:</b> this version opens the real designed form, reads local recording metadata, and exports project settings. MP3 generation is not connected yet; the existing Python/FFmpeg editor still handles finished audio.</p></section>
+<footer class="footer"><div class="row"><span id="status" role="status" class="status">Ready to add recordings.</span><div class="row"><button id="preview" class="btn">Preview timeline</button><button id="download" class="btn">Download settings</button><button class="btn accent" disabled title="MP3 rendering is not yet connected">Generate MP3 · Coming next</button></div></div></footer>
+</main>
+<script>
+"use strict";
+const byId=id=>document.getElementById(id);const tracks=[];let music=null;
+const collator=new Intl.Collator(undefined,{numeric:true,sensitivity:"base"});
+function pretty(s){if(!Number.isFinite(s))return "duration unknown";return Math.floor(s/60)+"m "+Math.floor(s%60)+"s";}
+function inspect(f){return new Promise(resolve=>{const audio=document.createElement("audio"),url=URL.createObjectURL(f);let complete=false;function done(v){if(complete)return;complete=true;audio.removeAttribute("src");audio.load();URL.revokeObjectURL(url);resolve(Number.isFinite(v)&&v>0?v:null)}audio.onloadedmetadata=()=>done(audio.duration);audio.onerror=()=>done(null);audio.preload="metadata";audio.src=url;setTimeout(()=>done(null),5000)})}
+function refresh(){const parent=byId("files");parent.replaceChildren();if(!tracks.length){const p=document.createElement("p");p.className="muted";p.textContent="No recordings selected.";parent.append(p)}tracks.forEach((t,i)=>{const row=document.createElement("div");row.className="file";const name=document.createElement("span");name.className="name";name.textContent=(i+1)+". "+t.file.name+" · "+pretty(t.duration);const up=document.createElement("button"),down=document.createElement("button"),remove=document.createElement("button");for(const b of [up,down,remove])b.className="btn mini";up.textContent="↑";down.textContent="↓";remove.textContent="Remove";up.disabled=i===0;down.disabled=i===tracks.length-1;up.onclick=()=>move(i,-1);down.onclick=()=>move(i,1);remove.onclick=()=>{tracks.splice(i,1);refresh()};row.append(name,up,down,remove);parent.append(row)})}
+function move(i,d){const j=i+d;if(j<0||j>=tracks.length)return;[tracks[i],tracks[j]]=[tracks[j],tracks[i]];refresh()}
+byId("voices").onchange=async e=>{const fs=[...e.target.files];e.target.value="";for(const f of fs){if(tracks.some(t=>t.file.name===f.name&&t.file.size===f.size&&t.file.lastModified===f.lastModified))continue;const t={file:f,duration:null};tracks.push(t);inspect(f).then(v=>{t.duration=v;refresh()})}refresh();byId("status").textContent=tracks.length+" recording(s) selected locally."};
+byId("sort").onclick=()=>{tracks.sort((a,b)=>collator.compare(a.file.name,b.file.name));refresh()};
+byId("clear").onclick=()=>{tracks.length=0;refresh()};
+byId("music").onchange=e=>{music=e.target.files[0]||null;byId("musicName").textContent=music?music.name:"No music selected";e.target.value=""};
+byId("removeMusic").onclick=()=>{music=null;byId("musicName").textContent="No music selected"};
+const num=id=>{const v=Number(byId(id).value);if(!Number.isFinite(v)||v<0||v>120)throw Error("Gaps must be between 0 and 120 seconds.");return v};
+function settings(){return {project_name:byId("project").value.trim()||"My Audio Project",voice_files:tracks.map(t=>t.file.name),measured_durations_seconds:tracks.map(t=>t.duration),music_file:music?.name||"",music_level:byId("musicLevel").value,after_intro_seconds:num("firstGap"),between_seconds:num("gap"),outro_seconds:music?num("outro"):0,music_under_intro:byId("musicIntro").checked,mute_music_during_final_voice:byId("muteFinal").checked,gentle_cleanup:byId("cleanup").checked,normalize_voice:byId("normalize").checked,denoise_voice:byId("denoise").checked,export_stems:byId("stems").checked,additional_instructions:byId("notes").value,rendered:false}}
+function preview(){try{const s=settings();if(!tracks.length)throw Error("Add recordings before previewing.");let total=0,all=true;const rows=[];tracks.forEach((t,i)=>{if(i){const gap=i===1?s.after_intro_seconds:s.between_seconds;rows.push("   ⇣ "+gap+" second gap");total+=gap}rows.push((i+1)+". "+t.file.name+" ("+pretty(t.duration)+")");if(t.duration===null)all=false;else total+=t.duration});if(music){rows.push("   ⇣ "+s.outro_seconds+" second music outro");total+=s.outro_seconds}rows.push("");rows.push(all?"Estimated total: "+pretty(total):"Total unavailable: one or more recording durations could not be read.");rows.push("Background music: "+(music?music.name+" ("+s.music_level+")":"none"));rows.push("Music during final voice: "+(music?(s.mute_music_during_final_voice?"muted":"allowed"):"not applicable"));byId("timeline").textContent=rows.join("\n");byId("status").textContent="Timeline ready for review. No audio has been rendered."}catch(err){byId("status").textContent=err.message}}
+byId("preview").onclick=preview;
+byId("download").onclick=()=>{try{const s=settings();if(!tracks.length)throw Error("Select recordings first.");const url=URL.createObjectURL(new Blob([JSON.stringify(s,null,2)],{type:"application/json"}));const a=document.createElement("a");a.href=url;a.download=s.project_name.replace(/[^a-z0-9_-]/gi,"_")+".json";a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);byId("status").textContent="Settings downloaded locally; no audio transmitted."}catch(err){byId("status").textContent=err.message}};
+const preset=new URLSearchParams(location.search).get("project");if(preset)byId("project").value=preset.slice(0,120);
+</script>
+</body>
+</html>

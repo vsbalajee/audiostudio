@@ -1,0 +1,14 @@
+{
+  // Cloudflare Workers Git integration: root directory = / (repository root).
+  // If your existing Worker has a different name, align both names before deploying.
+  "name": "audio-studio-mcp",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-11-17",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "assets": {
+    "directory": "./web",
+    "binding": "ASSETS",
+    "run_worker_first": ["/mcp", "/health"]
+  }
+}
