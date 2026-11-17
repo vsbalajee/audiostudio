@@ -6,11 +6,14 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "build:web": "node scripts/copy_browser_deps.mjs",
+    "predeploy": "npm run build:web"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.4.0",
-    "zod": "^4.6.7"
+    "zod": "^4.6.7",
+    "lamejs": "1.2.1"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20261014.1",
