@@ -75,5 +75,33 @@ assert.equal(Number(audio.channels),2);
 assert.ok(Number(probe.format.size)>1000);
 assert.deepEqual(errors,[]);
 console.log("PASS Browser MP3 downloaded:",dl.suggestedFilename(),"duration:",probe.format.duration,"size:",probe.format.size,"bytes");
+
+console.log("Testing voice + background music MP3 rendering");
+await page.goto(URL+"/",{waitUntil:"networkidle"});
+await page.locator("#voices").setInputFiles([
+ {name:"speech-a.wav",mimeType:"audio/wav",buffer:wav(1.1,330)},
+ {name:"speech-b.wav",mimeType:"audio/wav",buffer:wav(1.4,560)}
+]);
+await page.locator("#music").setInputFiles({name:"underscore.wav",mimeType:"audio/wav",buffer:wav(0.75,150)});
+await page.locator("#firstGap").fill("0.5");
+await page.locator("#outro").fill("1");
+await page.locator("#musicIntro").check();
+await page.locator("#muteFinal").check();
+await page.locator("#preview").click();
+const musicTimeline=await page.locator("#timeline").innerText();
+assert.match(musicTimeline,/underscore\.wav/);
+assert.match(musicTimeline,/music outro/);
+const [musicDownload] = await Promise.all([
+ page.waitForEvent("download",{timeout:120000}),
+ page.locator("#render").click()
+]);
+const musicFile=await musicDownload.path();
+const musicProbe=JSON.parse(execFileSync("ffprobe",["-v","error","-show_entries","format=duration,size:stream=codec_name,bit_rate,sample_rate,channels","-of","json",musicFile],{encoding:"utf-8"}));
+assert.ok(Number(musicProbe.format.duration)>3.5 && Number(musicProbe.format.duration)<5.0,JSON.stringify(musicProbe));
+assert.ok(musicProbe.streams.some(x=>x.codec_name==="mp3"),JSON.stringify(musicProbe));
+assert.ok(Number(musicProbe.format.size)>3000);
+assert.deepEqual(errors,[]);
+console.log("PASS Voice + music + gaps + outro MP3:",musicDownload.suggestedFilename(),"duration:",musicProbe.format.duration);
+
 await context.close();
 }finally{await browser.close();}
