@@ -1,0 +1,37 @@
+name: Cloudflare MCP validation
+on:
+  push:
+    branches:
+      - feature/cloudflare-mcp-browser-v2
+      - main
+    paths:
+      - package.json
+      - src/**
+      - web/**
+      - wrangler.jsonc
+      - tsconfig.json
+      - .github/workflows/cloudflare-mcp.yml
+  pull_request:
+    paths:
+      - package.json
+      - src/**
+      - web/**
+      - wrangler.jsonc
+      - tsconfig.json
+      - .github/workflows/cloudflare-mcp.yml
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Typecheck MCP
+        run: npm run typecheck
+      - name: Bundle Worker (no deployment)
+        run: npx wrangler deploy --dry-run --outdir .wrangler-dry-run

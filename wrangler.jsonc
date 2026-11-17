@@ -1,0 +1,14 @@
+{
+  // Cloudflare Workers Git integration: root directory = / (repository root).
+  // Confirmed existing Cloudflare Worker name: audiostudio; this must match.
+  "name": "audiostudio",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-11-17",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "assets": {
+    "directory": "./web",
+    "binding": "ASSETS",
+    "run_worker_first": ["/mcp", "/health"]
+  }
+}

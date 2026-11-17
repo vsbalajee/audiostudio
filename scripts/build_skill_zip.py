@@ -74,7 +74,14 @@ def main() -> int:
                 print('ERROR: packaged ZIP entries differ from expected source list', file=sys.stderr)
                 return 1
             for rel in INCLUDED:
-                if archive.read(f'audio-studio/{rel}') != (ROOT / rel).read_bytes():
+                archived = archive.read(f'audio-studio/{rel}')
+                current = (ROOT / rel).read_bytes()
+                # Git attributes check out Windows .bat files with CRLF, while
+                # the portable skill ZIP may contain LF. Both are equivalent.
+                if rel.endswith('.bat'):
+                    archived = archived.replace(b'\r\n', b'\n')
+                    current = current.replace(b'\r\n', b'\n')
+                if archived != current:
                     print(f'ERROR: stale packaged file: {rel}', file=sys.stderr)
                     return 1
         digest = sha256(OUTPUT.read_bytes()).hexdigest()
