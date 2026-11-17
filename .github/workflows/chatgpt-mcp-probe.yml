@@ -1,0 +1,35 @@
+name: ChatGPT MCP compatibility probes
+on:
+  push:
+    branches:
+      - test/chatgpt-mcp-compatibility
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Initialize older protocol
+        run: node scripts/chatgpt_mcp_probe.mjs initialize_2024_11_05
+      - name: Initialize 2025-03-26 protocol
+        run: node scripts/chatgpt_mcp_probe.mjs initialize_2025_03_26
+      - name: Initialize 2025-06-18 protocol
+        run: node scripts/chatgpt_mcp_probe.mjs initialize_2025_06_18
+      - name: Initialize 2025-11-25 protocol
+        run: node scripts/chatgpt_mcp_probe.mjs initialize_2025_11_25
+      - name: Initialize ChatGPT-style headers
+        run: node scripts/chatgpt_mcp_probe.mjs initialize_client_sdk_none
+      - name: Discover validated tool schemas
+        run: node scripts/chatgpt_mcp_probe.mjs tools_list_chatgpt_headers
+      - name: Call start tool
+        run: node scripts/chatgpt_mcp_probe.mjs tools_call_start
+      - name: Call settings tool
+        run: node scripts/chatgpt_mcp_probe.mjs tools_call_defaults
+      - name: Check GET transport behavior
+        run: node scripts/chatgpt_mcp_probe.mjs rpc_get_sse_optional
