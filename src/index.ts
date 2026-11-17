@@ -30,11 +30,11 @@ function createServer(origin: string) {
     url.searchParams.set("project", name);
     return { content: [{ type: "text", text: JSON.stringify({
       app_url: url.toString(),
-      action: "Offer the user an Open Audio Studio link. Ask them to open it to upload audio.",
+      action: "Offer the user an Open Audio Studio link. Ask them to open it and select their local recordings.",
       project_name: name,
       defaults,
       status: "browser_form_ready",
-      processing_note: "The browser preview currently exports settings and timeline, not rendered MP3."
+      processing_note: "The browser mixes local recordings and downloads a stereo MP3."
     }) }] };
   });
 
@@ -45,6 +45,7 @@ function createServer(origin: string) {
     accepted_audio_extensions: [".mp3", ".wav", ".m4a", ".aac", ".flac", ".ogg", ".opus", ".mp4"],
     browser_form_url: origin + "/",
     mcp_version: "2.0.0-preview",
+    browser_mp3_rendering: true,
     server_side_audio_rendering: false,
     file_uploads_to_cloudflare: false
   }) }] }));
