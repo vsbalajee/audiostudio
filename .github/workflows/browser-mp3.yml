@@ -1,0 +1,51 @@
+name: Browser MP3 and chat MCP integration tests
+on:
+  push:
+    branches:
+      - feature/chat-edits-and-browser-mp3
+  pull_request:
+    paths:
+      - web/**
+      - src/**
+      - package.json
+      - scripts/copy_browser_deps.mjs
+      - tests/browser_mp3_e2e.mjs
+      - .github/workflows/browser-mp3.yml
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Bundle MP3 encoder
+        run: npm run build:web
+      - name: Typecheck MCP
+        run: npm run typecheck
+      - name: Validate Cloudflare bundle
+        run: npx wrangler deploy --dry-run --outdir .wrangler-dry-run
+      - name: Install Chromium test runtime
+        run: |
+          npm install --no-save --no-audit --no-fund playwright
+          npx playwright install --with-deps chromium
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: Start local Cloudflare worker
+        run: |
+          nohup npx wrangler dev --local --ip 127.0.0.1 --port 8787 > /tmp/audiostudio-wrangler.log 2>&1 &
+          for i in $(seq 1 45); do
+            if curl -fsS http://127.0.0.1:8787/health; then exit 0; fi
+            sleep 2
+          done
+          cat /tmp/audiostudio-wrangler.log
+          exit 1
+      - name: End-to-end chat editing and actual MP3 generation
+        env:
+          AUDIO_STUDIO_URL: http://127.0.0.1:8787
+        run: node tests/browser_mp3_e2e.mjs
