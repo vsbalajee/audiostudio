@@ -1,0 +1,28 @@
+name: Audio Studio live browser E2E tests
+on:
+  push:
+    branches:
+      - test/live-cloudflare-smoke
+    paths:
+      - .github/workflows/live-cloudflare-browser.yml
+      - scripts/live_cloudflare_browser.mjs
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser testing dependencies
+        run: |
+          npm install --no-save --no-audit --no-fund playwright
+          npx playwright install --with-deps chromium
+      - name: Test public production browser interface
+        env:
+          AUDIO_STUDIO_URL: https://audiostudio.vsbalaajee.workers.dev
+        run: node scripts/live_cloudflare_browser.mjs

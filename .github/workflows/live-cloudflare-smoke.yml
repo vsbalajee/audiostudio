@@ -1,0 +1,24 @@
+name: Audio Studio live production smoke tests
+on:
+  push:
+    branches:
+      - test/live-cloudflare-smoke
+    paths:
+      - .github/workflows/live-cloudflare-smoke.yml
+      - scripts/live_cloudflare_smoke.mjs
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Test public deployed Audio Studio site and MCP
+        env:
+          AUDIO_STUDIO_URL: https://audiostudio.vsbalaajee.workers.dev
+        run: node scripts/live_cloudflare_smoke.mjs
