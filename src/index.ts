@@ -88,7 +88,7 @@ export default {
     }
     if (url.pathname === "/mcp") {
       // One factory/handler per request avoids state shared across different users.
-      return createMcpHandler(() => createServer(url.origin))(request, env, ctx);
+      return createMcpHandler(() => createServer(url.origin)).fetch(request);
     }
     return env.ASSETS.fetch(request);
   }
